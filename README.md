@@ -10,11 +10,11 @@ AMX Mod X plugin for Counter-Strike: Condition Zero that provides admin menu for
   - **5v5 Mixed** - Bots fill both teams, players replace bots (auto-vacate)
   - **No Bots** - Disable all bots
 
-- **Bot Difficulty Control:** Easy, Normal, Hard, Expert
+- **Bot Difficulty Control:** Easy, Normal, Hard, Expert, Mixed (random Normal-Expert per bot)
 
 - **Dynamic Bot Count:** Adjust number of bots (0-10) on the fly
 
-- **Persistent Settings:** Settings saved via CVars
+- **Persistent Settings:** Settings automatically saved to file and restored after map change
 
 ## Requirements
 
@@ -33,7 +33,7 @@ Using the AMX Mod X web compiler or local compiler:
 amxxpc czbot_manager.sma -o czbot_manager.amxx
 ```
 
-Or use the online compiler at: https://www.amxmodx.org/compiler.php
+Or use the online compiler at: https://www.amxmodx.org/webcompiler.cgi
 
 ### Step 2: Install the plugin
 
@@ -119,7 +119,16 @@ czbot_manager.amxx     ; <-- Bot Manager appears after standard items
 |------|---------|-------------|
 | `czbot_mode` | 0 | Game mode (0-3) |
 | `czbot_count` | 6 | Number of bots |
-| `czbot_difficulty` | 1 | Difficulty (0=Easy, 1=Normal, 2=Hard, 3=Expert) |
+| `czbot_difficulty` | 1 | Difficulty (0=Easy, 1=Normal, 2=Hard, 3=Expert, 4=Mixed) |
+
+### Settings File
+
+Settings are automatically saved to:
+```
+addons/amxmodx/data/czbot_settings.ini
+```
+
+This file is created automatically when you first change any setting. Settings persist across map changes and server restarts.
 
 ## Troubleshooting
 
@@ -162,6 +171,12 @@ game-mode-cz/
 ```
 
 ## Version History
+
+- **1.1.0** - Current
+  - Added Mixed difficulty (random Normal-Expert per bot)
+  - Added automatic settings persistence to file
+  - Added automatic player team transfer on mode change
+  - Fixed bot spawning with delays for reliability
 
 - **1.0.0** - Initial release
   - 4 game modes
