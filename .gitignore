@@ -1,0 +1,31 @@
+# Compiled AMX Mod X plugins
+*.amxx
+*.amx
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# AI
+.claude
+
+# Logs
+*.log
+
+# Local config overrides
+local.cfg
