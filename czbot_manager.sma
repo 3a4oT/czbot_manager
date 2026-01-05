@@ -311,12 +311,11 @@ public apply_BotSettings() {
  * Task to add bots after kicking
  */
 public task_AddBots() {
-    // Set difficulty (Mixed = random once for all bots this session)
-    new difficulty = g_BotDifficulty;
-    if (difficulty == DIFF_MIXED) {
-        difficulty = random_num(1, 3);  // Random: Normal, Hard, or Expert
+    // Set difficulty (for non-Mixed modes)
+    // Mixed mode sets difficulty per-bot in task_AddOneBot()
+    if (g_BotDifficulty != DIFF_MIXED) {
+        server_cmd("bot_difficulty %d", g_BotDifficulty);
     }
-    server_cmd("bot_difficulty %d", difficulty);
     server_cmd("bot_quota 0");
     server_exec();
 
@@ -387,9 +386,14 @@ public task_AddOneBot() {
         return;
     }
 
+    // For Mixed mode: set random difficulty for each bot
+    if (g_BotDifficulty == DIFF_MIXED) {
+        new randomDiff = random_num(1, 3);  // Normal(1), Hard(2), or Expert(3)
+        server_cmd("bot_difficulty %d", randomDiff);
+        server_exec();
+    }
+
     // Add bot to appropriate team
-    // Note: bot_difficulty is set once in task_AddBots(), not per-bot
-    // This avoids "all bot profiles at this difficulty level are in use" error
     switch (g_BotTeamToAdd) {
         case 1: {
             server_cmd("bot_add_t");
