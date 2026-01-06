@@ -1,6 +1,13 @@
-# CZ Bot Manager
+# Bot Manager Plugins for AMX Mod X
 
-AMX Mod X plugin for Counter-Strike: Condition Zero that provides admin menu for dynamic bot management and game mode switching.
+AMX Mod X plugins for Counter-Strike 1.6 and Condition Zero that provide admin menu for dynamic bot management and game mode switching.
+
+## Plugins
+
+| Plugin | Game | Bot System |
+|--------|------|------------|
+| `czbot_manager.sma` | CS: Condition Zero | CZ Bots (built-in) |
+| `yapb_manager.sma` | CS 1.6 | YaPB (Yet another POD-Bot) |
 
 ## Features
 
@@ -10,189 +17,162 @@ AMX Mod X plugin for Counter-Strike: Condition Zero that provides admin menu for
   - **5v5 Mixed** - Bots fill both teams, players replace bots (auto-vacate)
   - **No Bots** - Disable all bots
 
-- **Bot Difficulty Control:** Easy, Normal, Hard, Expert, Mixed (random Normal-Expert per bot)
+- **Bot Difficulty Control:**
+  - CZ: Easy, Normal, Hard, Expert, Mixed
+  - YaPB: Newbie, Average, Normal, Professional, Godlike, Mixed
 
 - **Dynamic Bot Count:** Adjust number of bots (0-10) on the fly
 
-- **Persistent Settings:** Settings automatically saved to file and restored after map change
+- **Persistent Settings:** Settings automatically saved and restored after map change/restart
+
+- **Admin Menu Integration:** Appears in standard `amxmodmenu`
 
 ## Requirements
 
-- Counter-Strike: Condition Zero dedicated server (HLDS)
-- **MetaMod 1.21.1-am** - Download from [amxmodx.org](https://amxmodx.org/downloads.php), NOT from metamod.org (older versions cause segfaults with CZ bots)
+### For CS: Condition Zero (czbot_manager)
+- Counter-Strike: Condition Zero dedicated server
+- **MetaMod 1.21.1-am** from [amxmodx.org](https://amxmodx.org/downloads.php)
 - **AMX Mod X 1.8.2+** (recommended: 1.10.x)
+
+### For CS 1.6 (yapb_manager)
+- Counter-Strike 1.6 dedicated server
+- **MetaMod 1.21.1-am** from [amxmodx.org](https://amxmodx.org/downloads.php)
+- **AMX Mod X 1.8.2+** (recommended: 1.10.x)
+- **YaPB 4.x** from [yapb.github.io](https://yapb.github.io/)
 
 ## Installation
 
 ### Step 1: Compile the plugin
 
-Using the AMX Mod X web compiler or local compiler:
-
 ```bash
-# Using local compiler
+# For CZ
 amxxpc czbot_manager.sma -o czbot_manager.amxx
+
+# For CS 1.6
+amxxpc yapb_manager.sma -o yapb_manager.amxx
 ```
 
 Or use the online compiler at: https://www.amxmodx.org/webcompiler.cgi
 
 ### Step 2: Install the plugin
 
-1. Copy `czbot_manager.amxx` to:
-   ```
-   czero/addons/amxmodx/plugins/
-   ```
+Copy compiled `.amxx` to:
+```
+# CZ
+czero/addons/amxmodx/plugins/czbot_manager.amxx
 
-2. Edit `czero/addons/amxmodx/configs/plugins.ini` and add:
-   ```
-   czbot_manager.amxx
-   ```
+# CS 1.6
+cstrike/addons/amxmodx/plugins/yapb_manager.amxx
+```
 
-   **Important:** The plugin must be listed AFTER `menufront.amxx` for the admin menu integration to work.
+Edit `plugins.ini` and add the plugin name (after `menufront.amxx`).
 
 ### Step 3: Configure server.cfg
 
-Add these lines to your `czero/server.cfg`:
-
+**For CZ:**
 ```
-// CZ Bot Manager - Required settings
-bot_join_after_player 0    // Prevents conflicts with plugin
-bot_quota 0                // Let plugin control bot count
-mp_autoteambalance 0       // Prevent auto team switching
-mp_limitteams 0            // Allow unbalanced teams for vs modes
+bot_join_after_player 0
+bot_quota 0
+mp_autoteambalance 0
+mp_limitteams 0
+```
+
+**For CS 1.6 with YaPB:**
+```
+mp_autoteambalance 0
+mp_limitteams 0
+// YaPB settings controlled by plugin
 ```
 
 ### Step 4: Restart server
-
-Restart your CS:CZ server for changes to take effect.
 
 ## Usage
 
 ### Accessing the Menu
 
-There are **two ways** to open Bot Manager:
+1. **Via AMX Mod X Admin Menu:**
+   - Type `amxmodmenu` in console
+   - Select **"Bot Manager"** or **"YaPB Manager"**
 
-1. **Via AMX Mod X Admin Menu (recommended)**
-   - Type `amxmodmenu` in console (or press bound key)
-   - Find **"Bot Manager"** in the list
-   - Select it to open
-
-2. **Direct console command**
-   - Type `amx_botmenu` or `amx_bots` in console
+2. **Direct console command:**
+   - CZ: `amx_botmenu` or `amx_bots`
+   - CS 1.6: `amx_yapbmenu` or `amx_yapb`
 
 **Access Level:** ADMIN_LEVEL_A (flag "m")
 
-### Menu Position in amxmodmenu
+### Menu Options
 
-The position of "Bot Manager" in the admin menu list depends on the **load order in plugins.ini**. Plugins loaded later appear lower in the menu.
-
-To change position, move `czbot_manager.amxx` line in `plugins.ini`:
-- **Higher in list** = appears earlier in menu
-- **Lower in list** = appears later in menu
-
-Example `plugins.ini` order:
-```ini
-; Standard plugins
-admin.amxx
-adminhelp.amxx
-adminslots.amxx
-multilingual.amxx
-menufront.amxx         ; <-- MUST be before czbot_manager
-admincmd.amxx
-adminvote.amxx
-; Custom plugins
-czbot_manager.amxx     ; <-- Bot Manager appears after standard items
-```
-
-### Menu Navigation
-
-1. Open menu via `amxmodmenu` or `amx_botmenu`
-2. Select options using number keys:
-   - **1** - Change Game Mode
-   - **2** - Change Bot Difficulty
-   - **3** - Increase Bot Count (+1)
-   - **4** - Decrease Bot Count (-1)
-   - **5** - Apply Changes Now
+1. Change Game Mode
+2. Change Bot Difficulty
+3. Increase Bot Count (+1)
+4. Decrease Bot Count (-1)
+5. Apply Changes Now
 
 ### CVars
 
+**CZ Bot Manager:**
 | CVar | Default | Description |
 |------|---------|-------------|
 | `czbot_mode` | 0 | Game mode (0-3) |
 | `czbot_count` | 6 | Number of bots |
-| `czbot_difficulty` | 1 | Difficulty (0=Easy, 1=Normal, 2=Hard, 3=Expert, 4=Mixed) |
+| `czbot_difficulty` | 1 | Difficulty (0-4) |
 
-### Settings File
+**YaPB Manager:**
+| CVar | Default | Description |
+|------|---------|-------------|
+| `yapb_manager_mode` | 0 | Game mode (0-3) |
+| `yapb_manager_count` | 6 | Number of bots |
+| `yapb_manager_difficulty` | 2 | Difficulty (0-5) |
 
-Settings are automatically saved to:
+### Settings Files
+
 ```
+# CZ
 addons/amxmodx/data/czbot_settings.ini
-```
 
-This file is created automatically when you first change any setting. Settings persist across map changes and server restarts.
+# CS 1.6
+addons/amxmodx/data/yapb_settings.ini
+```
 
 ## Troubleshooting
 
-### "Bot Manager" not showing in amxmodmenu
+### Plugin not showing in amxmodmenu
+- Ensure `menufront.amxx` is enabled
+- Plugin must be listed AFTER `menufront.amxx` in `plugins.ini`
 
-**Check:**
-1. Ensure `menufront.amxx` is enabled in `plugins.ini`
-2. Ensure `czbot_manager.amxx` is listed AFTER `menufront.amxx`
-3. Check server logs for: `[CZ Bot Manager] Added to AMX Mod X admin menu`
-4. If you see `WARNING: menufront.amxx not loaded`, enable menufront.amxx
+### CZ Bots cause server crash
+- Use MetaMod 1.21.1-am from amxmodx.org
 
-**Note:** Even if menu integration fails, you can always use `amx_botmenu` command directly.
-
-### Bots cause server crash (Segfault)
-
-**Solution:** Use MetaMod 1.21.1-am from amxmodx.org, not the outdated version from metamod.org.
-
-### Bots don't appear after applying settings
-
-**Check:**
-1. Ensure `bot_join_after_player 0` is set in server.cfg
-2. Verify plugin is loaded: `amx_plugins` in console
-3. Check server logs for errors
-
-### Bots join wrong team
-
-**Solution:** Ensure `mp_autoteambalance 0` is set in server.cfg
-
-### Players can't join desired team
-
-**Solution:** Set `mp_limitteams 0` in server.cfg
+### YaPB bots not working
+- Verify YaPB is installed: `addons/yapb/bin/yapb.so`
+- Check `liblist.gam` points to MetaMod
+- Check MetaMod `plugins.ini` includes YaPB
 
 ## File Structure
 
 ```
 game-mode-cz/
-├── czbot_manager.sma    # Plugin source code
-├── README.md            # This file
-└── .gitignore          # Git ignore rules
+├── czbot_manager.sma    # CZ Bot Manager source
+├── czbot_manager.amxx   # CZ Bot Manager compiled
+├── yapb_manager.sma     # YaPB Manager source
+└── README.md
 ```
 
 ## Version History
 
-- **1.1.0** - Current
-  - Added Mixed difficulty (random Normal-Expert per bot)
-  - Added automatic settings persistence to file
-  - Added automatic player team transfer on mode change
-  - Fixed bot spawning with delays for reliability
-
+### czbot_manager
+- **1.1.0** - Mixed difficulty, persistent settings, auto team transfer
 - **1.0.0** - Initial release
-  - 4 game modes
-  - Bot difficulty control
-  - Dynamic bot count
-  - Admin menu integration
+
+### yapb_manager
+- **1.0.0** - Initial release for YaPB bots
 
 ## License
 
-Free to use and modify for your CS:CZ server.
+Free to use and modify.
 
 ## Credits
 
 - CZ Bot system by Valve/Gearbox
+- YaPB by jeefo
 - AMX Mod X by AlliedModders
-- Research sources:
-  - [CZ Bot Commands Guide](https://steamcommunity.com/sharedfiles/filedetails/?id=126699221)
-  - [AMX Mod X Documentation](https://www.amxmodx.org/doc/)
-  - [AlliedModders Forums](https://forums.alliedmods.net/)
