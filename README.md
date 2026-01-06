@@ -38,7 +38,7 @@ AMX Mod X plugins for Counter-Strike 1.6 and Condition Zero that provide admin m
 - Counter-Strike 1.6 dedicated server
 - **MetaMod 1.21.1-am** from [amxmodx.org](https://amxmodx.org/downloads.php)
 - **AMX Mod X 1.8.2+** (recommended: 1.10.x)
-- **YaPB 4.x** from [yapb.github.io](https://yapb.github.io/)
+- **YaPB 4.x** from [github.com/yapb/yapb](https://github.com/yapb/yapb)
 
 ## Installation
 
